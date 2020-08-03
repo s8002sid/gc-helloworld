@@ -8,7 +8,7 @@ app.get('/', (req, res) => {
 
   const target = process.env.TARGET || 'Sid';
   res.send(`Hello ${target}!, how are you!!`);
-  logger.info('route / called');
+  logger.error('route / called as I told you');
 });
 
 const port = process.env.PORT || 8080;
