@@ -1,19 +1,6 @@
 const express = require('express');
 const app = express();
-const bunyan = require('bunyan');
-const {LoggingBunyan} = require('@google-cloud/logging-bunyan');
-const loggingBunyan = new LoggingBunyan();
-const logger = bunyan.createLogger({
-  // The JSON payload of the log as it appears in Stackdriver Logging
-  // will contain "name": "my-service"
-  name: 'my-service',
-  streams: [
-    // Log to the console at 'info' and above
-    {stream: process.stdout, level: 'info'},
-    // And log to Stackdriver Logging, logging at 'info' and above
-    loggingBunyan.stream('info'),
-  ],
-});
+const logger = require('./service/logging')
 
 
 app.get('/', (req, res) => {
