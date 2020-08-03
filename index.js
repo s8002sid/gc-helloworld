@@ -7,7 +7,7 @@ app.get('/', (req, res) => {
   console.log('Hello world received a request.');
 
   const target = process.env.TARGET || 'Sid';
-  res.send(`Hello ${target}!`);
+  res.send(`Hello ${target}!, how are you!!`);
   logger.info('route / called');
 });
 
