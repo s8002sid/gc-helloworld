@@ -52,9 +52,7 @@ passport.use(new GoogleStrategy({
     callbackURL: "https://gc-helloworld-v4vl4rp6dq-uc.a.run.app/auth/google/callback"
   },
   function(accessToken, refreshToken, profile, done) {
-       User.findOrCreate({ googleId: profile.id }, function (err, user) {
-         return done(err, user);
-       });
+       logger.info(`<<< Profile ID: ${profile.id} >>>`)
   }
 ));
 
