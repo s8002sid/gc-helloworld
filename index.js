@@ -6,7 +6,7 @@ const logger = require('./service/logging')('index');
 const storage = require('./service/storage');
 const db = require('./service/db');
 const email = require('./service/email');
-
+const iam = require('./service/iam')
 const multer = Multer({
   storage: Multer.memoryStorage(),
   limits: {
@@ -17,6 +17,7 @@ const multer = Multer({
 //use GOOGLE_APPLICATION_CREDENTIALS to set credential
 //Delete all log from a given logname using "gcloud logging logs delete LOG_NAME"
 const app = express();
+app.use(express.static('static'))
 app.get('/', (req, res) => {
   console.log('Hello world received a request.');
 
@@ -36,6 +37,7 @@ app.post('/job/submit', multer.single('file'), (req, res, next) => {
   //.then((url) => {res.redirect(url)})
   .catch((e) => {res.status(404).send({status: "error"});})
 });
+
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
