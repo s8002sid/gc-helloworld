@@ -4,7 +4,8 @@ const Multer = require('multer');
 
 const logger = require('./service/logging')('index');
 const storage = require('./service/storage');
-
+const db = require('./service/db');
+const email = require('./service/email');
 
 const multer = Multer({
   storage: Multer.memoryStorage(),
@@ -21,7 +22,7 @@ app.get('/', (req, res) => {
 
   const target = process.env.TARGET || 'Sid';
   res.send(`Hello ${target}!, how are you!!`);
-  logger.error('route / called as I told you');
+  logger.info('route / called as I told you');
 });
 
 app.post('/job/submit', multer.single('file'), (req, res, next) => {
