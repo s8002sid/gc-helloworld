@@ -1,4 +1,4 @@
-const g = require('../common/global')
+const g = require('../common/global').global;
 const {format} = require('util');
 // By default, the client will authenticate using the service account file
 // specified by the GOOGLE_APPLICATION_CREDENTIALS environment variable and use

@@ -1,6 +1,6 @@
 const {SecretManagerServiceClient} = require('@google-cloud/secret-manager');
 const client = new SecretManagerServiceClient();
-const g = require('../common/global');
+const g = require('../common/global').global;
 
 async function getSecret(name) {
     const [accessResponse] = await client.accessSecretVersion({

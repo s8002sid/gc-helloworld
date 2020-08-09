@@ -1,7 +1,7 @@
 const bunyan = require('bunyan');
 const {LoggingBunyan} = require('@google-cloud/logging-bunyan');
 const loggingBunyan = new LoggingBunyan();
-const g = require('../common/global')
+const g = require('../common/global').global;
 // const logger = bunyan.createLogger({
 //   // The JSON payload of the log as it appears in Stackdriver Logging
 //   // will contain "name": "SIDDJAIN-VM"

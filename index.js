@@ -6,7 +6,9 @@ const logger = require('./service/logging')('index');
 const storage = require('./service/storage');
 const db = require('./service/db');
 const email = require('./service/email');
-const iam = require('./service/iam')
+const app = express();
+const iamRouter = require('./service/iam');
+app.use('/', iamRouter);
 const multer = Multer({
   storage: Multer.memoryStorage(),
   limits: {
@@ -16,7 +18,6 @@ const multer = Multer({
 
 //use GOOGLE_APPLICATION_CREDENTIALS to set credential
 //Delete all log from a given logname using "gcloud logging logs delete LOG_NAME"
-const app = express();
 app.use(express.static('static'))
 app.get('/', (req, res) => {
   console.log('Hello world received a request.');
@@ -38,43 +39,23 @@ app.post('/job/submit', multer.single('file'), (req, res, next) => {
   .catch((e) => {res.status(404).send({status: "error"});})
 });
 
-/******************************************/
-var passport = require('passport');
-var GoogleStrategy = require('passport-google-oauth').OAuth2Strategy;
-
-// Use the GoogleStrategy within Passport.
-//   Strategies in Passport require a `verify` function, which accept
-//   credentials (in this case, an accessToken, refreshToken, and Google
-//   profile), and invoke a callback with a user object.
-passport.use(new GoogleStrategy({
-    clientID: '462043570647-jhv9unafh5kst6odo7ktd56j642n31kf.apps.googleusercontent.com',
-    clientSecret: 'sr67FJd41of4pgxcr6bEsceh',
-    callbackURL: "https://gc-helloworld-v4vl4rp6dq-uc.a.run.app/auth/google/callback"
-  },
-  function(accessToken, refreshToken, profile, done) {
-       logger.info(`<<< Profile ID: ${profile.id} >>>`)
-  }
-));
-
-// GET /auth/google
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  The first step in Google authentication will involve
-//   redirecting the user to google.com.  After authorization, Google
-//   will redirect the user back to this application at /auth/google/callback
-app.get('/auth/google',
-  passport.authenticate('google', { scope: ['https://www.googleapis.com/auth/plus.login'] }));
-
-// GET /auth/google/callback
-//   Use passport.authenticate() as route middleware to authenticate the
-//   request.  If authentication fails, the user will be redirected back to the
-//   login page.  Otherwise, the primary route function function will be called,
-//   which, in this example, will redirect the user to the home page.
-app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/' }),
+app.get('/ping', 
+  //require('connect-ensure-login').ensureLoggedIn(),
   function(req, res) {
-    res.redirect('/');
-  });
-/******************************************/
+    res.send({authentication: 'done'});
+});
+
+app.get('/unauthorized', function(req, res) {
+    res.status(401).send({status: "unauthorized"});
+})
+
+app.get('/error', function (req, res) {
+  res.status(404).send({status: "error"});
+});
+
+app.use(function (req, res, next) {
+  res.redirect('/error');
+})
 const port = process.env.PORT || 8080;
 app.listen(port, () => {
   logger.info('Hello world listening on port', port);
