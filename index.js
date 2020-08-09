@@ -8,6 +8,7 @@ const db = require('./service/db');
 const email = require('./service/email');
 const app = express();
 const iamRouter = require('./service/iam');
+const util = require('./common/util');
 let route, routes = [];
 
 app.use('/', iamRouter);
@@ -70,16 +71,12 @@ logger.info('Server is ready...');
 
 app._router.stack.forEach(function(middleware){
     if(middleware.route){ // routes registered directly on the app
-        routes.push(middleware.route);
+        routes.push(util.parseRouteStack(middleware.route));
     } else if(middleware.name === 'router'){ // router middleware 
         middleware.handle.stack.forEach(function(handler){
             route = handler.route;
-            let routeJson = {};
             if (route) {
-              routeJson.path = route.path
-              routeJson.method = [];
-              route.stack.forEach((i)=> {routeJson.method.push(i.method)})
-              routes.push(routeJson);
+              routes.push(util.parseRouteStack(route));
             }
         });
     }
