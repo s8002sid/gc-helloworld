@@ -8,6 +8,8 @@ const db = require('./service/db');
 const email = require('./service/email');
 const app = express();
 const iamRouter = require('./service/iam');
+let route, routes = [];
+
 app.use('/', iamRouter);
 const multer = Multer({
   storage: Multer.memoryStorage(),
@@ -52,6 +54,11 @@ app.get('/error', function (req, res) {
   res.status(404).send({status: "error"});
 });
 
+app.get('/api', function (req, res) {
+  let apiList = JSON.stringify(routes, null, 2)
+  res.status(200).send(apiList);
+});
+
 app.use(function (req, res, next) {
   res.redirect('/error');
 })
@@ -60,3 +67,20 @@ app.listen(port, () => {
   logger.info('Hello world listening on port', port);
 });
 logger.info('Server is ready...');
+
+app._router.stack.forEach(function(middleware){
+    if(middleware.route){ // routes registered directly on the app
+        routes.push(middleware.route);
+    } else if(middleware.name === 'router'){ // router middleware 
+        middleware.handle.stack.forEach(function(handler){
+            route = handler.route;
+            let routeJson = {};
+            if (route) {
+              routeJson.path = route.path
+              routeJson.method = [];
+              route.stack.forEach((i)=> {routeJson.method.push(i.method)})
+              routes.push(routeJson);
+            }
+        });
+    }
+});
