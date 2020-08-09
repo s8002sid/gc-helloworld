@@ -39,10 +39,9 @@ app.post('/job/submit', multer.single('file'), (req, res, next) => {
   .catch((e) => {res.status(404).send({status: "error"});})
 });
 
-app.get('/ping', 
-  //require('connect-ensure-login').ensureLoggedIn(),
+app.get('/ping',
   function(req, res) {
-    res.send({authentication: 'done'});
+    res.send({status: 'up'});
 });
 
 app.get('/unauthorized', function(req, res) {

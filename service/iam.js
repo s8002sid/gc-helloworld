@@ -26,7 +26,7 @@ passport.deserializeUser(function(user, done) {
 passport.use(new GoogleStrategy({
     clientID: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
-    callbackURL: process.env.WEBSERVER_URL + "/auth/google/callback",
+    callbackURL: "/auth/google/callback",
     state: true
   },
   function(accessToken, refreshToken, profile, done) {
@@ -67,4 +67,12 @@ router.get('/logout', function (req, res) {
     res.redirect('/');
 });
 
+//require('connect-ensure-login').ensureLoggedIn(),
+router.get('/auth/check',
+    function (req, res) {
+        if (req.user)
+            res.status(200).send({status: "authenticated"})
+        else
+            res.status(401).send({status: "unauthenticated"})
+});
 module.exports = router;
