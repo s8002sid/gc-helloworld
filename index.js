@@ -23,11 +23,12 @@ const multer = Multer({
 //Delete all log from a given logname using "gcloud logging logs delete LOG_NAME"
 app.use(express.static('static'))
 app.get('/', (req, res) => {
-  console.log('Hello world received a request.');
-
-  const target = process.env.TARGET || 'Sid';
-  res.send(`Hello ${target}!, how are you!!`);
-  logger.info('route / called as I told you');
+  if (req.user) {
+    name = req.user.name.firstName||req.user.name.fillName;
+    res.send(`Hello!, ${name} how are you!!`);
+  } else {
+    res.send(`Hello!, how are you!! <a href='/login'>Click Here</a> to login`);
+  }
 });
 
 app.post('/job/submit', multer.single('file'), (req, res, next) => {

@@ -32,7 +32,13 @@ passport.use(new GoogleStrategy({
   function(accessToken, refreshToken, profile, done) {
        logger.info(`<<< Profile ID: ${profile.id} logged in >>>`);
        let name='', email='', photo='';
-       name = profile.displayName;
+       name = {
+         fullName: profile.displayName,
+       }
+       if (profile.name) {
+        name.firstName = profile.name.givenName;
+        name.lastName = profile.name.familyName;
+       }
        if (profile.emails && profile.emails.length >= 1) {
            email = profile.emails[0].value; 
        }
